@@ -33,6 +33,38 @@ recover_secret(triplets_1) ==  secret_1
 **Data Structures**
 - Input array
 - output string
+- hash of characters before and after each charcter
+- hash of characters max and min index
+- hash of characters final index
+
+
+**New Algorithm**
+1. determine lenght of secret string
+2. create new array of length equal to that of the secret strings length
+3. determine all unique characters
+4. add all unique characters the to new array
+5. iterate over each character in the new array
+  - create a hash that stores all characters known to be before or after
+  - create max_index and min_index
+  - min_index equals size of array containing all characters before it
+  - max_index equals size of new array minus size of all characters after
+  - if min_index == max_index then set as final index
+6. iterate over each index in the return array
+  - check first to see if index is included in final index
+  - if not, check to see which characters could be included
+  - find a way to eliminate multiples
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 **Algorithm**
