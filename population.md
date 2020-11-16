@@ -1,18 +1,3 @@
-require 'pry'
-
-# def nb_year(p0, percent, aug, p)
-#   total_population = p0.to_f
-#   years = 0
-  
-#   until total_population >= p
-#     # binding.pry
-#     total_population = (total_population + ((total_population * percent) / 100) + aug)
-
-#     years += 1
-#   end
-#   p years
-# end
-
 =begin
 **Problem**
 In a small town the population is p0 = 1000 at the beginning of a year. 
@@ -67,24 +52,3 @@ nb_year(1500000, 2.5, 10000, 2000000) == 10
 6. if the current population is equal to or greater than the target population return years
 7. otherwise repeat steps 4-6
 =end
-
-def calculate_population(current_population, percent_growth, augment)
-  (current_population + ((current_population * (percent_growth.to_f / 100)).to_i + augment))
-end
-
-def nb_year(initial_population, percent_growth, augment, target_population)
-  number_of_years = 0
-  current_population = initial_population
-  
-  loop do
-    current_population = calculate_population(current_population, percent_growth, augment)
-    number_of_years += 1
-    break if current_population >= target_population
-  end
-  number_of_years
-end
-
-
-p nb_year(1500, 5, 100, 5000) ==  15
-p nb_year(1500000, 2.5, 10000, 2000000) == 10
-p nb_year(1500000, 0.25, 1000, 2000000) == 94

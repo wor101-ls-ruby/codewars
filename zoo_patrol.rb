@@ -34,49 +34,47 @@ zoo([4, 2, 3])  ==  1
 
 require 'pry'
 
+
 # def zoo(array)
 #   array = array.sort
+  
 #   escaped_number = nil
-  
-#   escaped_number = 1 if array == []
-  
-#   array.each_with_index do |number, index|
-#     if array[0] != 1
-#       escaped_number = 1
-#       break
-#     elsif index == (array.size - 1)
-#       escaped_number = number + 1
-#       break
-#     elsif array[index + 1] != number + 1
-#       escaped_number = number + 1
-#       break
+
+#   if array == [] || array[0] != 1
+#     escaped_number = 1
+#   else
+#     full_range = (1..array[-1]).to_a
+#     combined_arrays = array + full_range
+#     unique = combined_arrays.select { |int| combined_arrays.count(int) < 2 }
+#     if unique == []
+#       escaped_number = array[-1] + 1
+#     else
+#       escaped_number = unique[0]
 #     end
-#   end
-#   p escaped_number
+#   end  
+#   escaped_number
 # end
 
 def zoo(array)
-  array = array.sort
+  return 1 if array == []
   
+  range_sum = (1..array.max).sum
+  array_sum = array.sum
   escaped_number = nil
 
-  if array == [] || array[0] != 1
-    escaped_number = 1
+  
+  if array.min != 1 
+    escaped_number = 1  
+  elsif range_sum - array_sum == 0
+    escaped_number = array.max + 1
   else
-    full_range = (1..array[-1]).to_a
-    combined_arrays = array + full_range
-    unique = combined_arrays.select { |int| combined_arrays.count(int) < 2 }
-    if unique == []
-      escaped_number = array[-1] + 1
-    else
-      escaped_number = unique[0]
-    end
-  end  
-  escaped_number
+    escaped_number = range_sum - array_sum
+  end
+  p escaped_number
 end
 
 
+p zoo([]) == 1
 p zoo([1, 3, 4])  ==  2
 p zoo([1, 2, 3])  ==  4
 p zoo([4, 2, 3])  ==  1
-# p zoo([])
