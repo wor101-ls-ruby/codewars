@@ -15,8 +15,8 @@ Explicit
   - Input: A string of words separated by spaces
   - Output: a string 
   - words are separated by white space
-  - reverse each word and combine in pairs (1 with 2, 3 with 4)
-  - repeat until there are no spaces left
+  - takes words in pairs reverses the letters in each word and combines them
+  - continues to do so until no more pairs, or if odd, one remains
 Implicit
   - a single word is not reversed
   - if an odd number of words, last word stays alone but must be reversed
@@ -37,71 +37,42 @@ Output: "43hgff434cbafed343ire_55321"
 - An array of words delimited by whitespace
 
 **Algorithm**
-1. split the input string into an array by whitespace
-2. if arrays size is 1 then turn array to a string and return it
-3. store size of the array as an integer
-4. counter to keep track of index
-5. loop until we reach final index of the array
-6. take first two elements and reverse each
-7. then combine those two elements into one
-8. increase our counter by 2
-9. turn array into string and return
+1. Create array of words split by whitespace
+2. Create new Array of reversed and joined words
+3. If the size of the words array is 1 return a string version of the 1 elment
+4. Destructively take the first two elements
+5. reverse the string in each element and then join the elments
+6. add the newly reversed/joined string to the return array
+7. if the words arrays size is greater than 0 then pass it to the method again
 
 =end
-
-def two_elements_switch(element1, element2)
-  element1.reverse!
-  element2.reverse!
-  element1 + element2
-end
-
-
-# def reverse_and_combine_text(input_string)
-#   words_array = input_string.split(' ')
-#   array_size = words_array.size
-#   index_counter = 0
-  
-#   return input_string if array_size == 1
-  
-#   loop do
-#     if index_counter < array_size - 2
-#       new_element = two_elements_switch(words_array[index_counter], words_array[index_counter + 1])
-#       2.times { |_| words_array.shift }
-#       words_array.unshift(new_element)
-#       index_counter += 1
-#     elsif index_counter == array_size - 1
-#       words_array[index_counter].reverse!
-#       index_counter += 1 
-#     end
-    
-#     break if index_counter > array_size
-#   end
-  
-#   p words_array
-# end
-
-def combine_elements(element1, element2)
-  
-end
+require 'pry'
 
 def reverse_and_combine_text(input_string)
-  words_array = input_string.split(' ').map { |word| word.reverse }
-  return_array = []
-  
+  words_array = input_string.split(' ')
+  words_array.map { |word| word.reverse! }
+  reversed_and_joined = []
+
   return input_string if words_array.size == 1
   
-  words_array.each_with_index do |word, index|
-    
-    
-    
+  reversed_and_joined << words_array.shift(2).join
+  
+  until reversed_and_joined.size == 1 && words_array.size == 0
+  # binding.pry
+    if words_array.size > 0
+      # binding.pry
+      reversed_and_joined << reverse_and_combine_text(words_array.shift(2).join(' '))
+    elsif reversed_and_joined.size > 1
+      # binding.pry
+      reversed_and_joined = [reverse_and_combine_text(reversed_and_joined.join(' '))]
+    end
   end
-  
-
-  
+  p reversed_and_joined[0]
 end
 
-p reverse_and_combine_text("abc def") == "cbafed"
+
+# p reverse_and_combine_text("abc def") == "cbafed"
 p reverse_and_combine_text("abc def ghi jkl") == "defabcjklghi"
-p reverse_and_combine_text("dfghrtcbafed") == "dfghrtcbafed"
-p reverse_and_combine_text("234hh54 53455 sdfqwzrt rtteetrt hjhjh lllll12  44") == "trzwqfdstrteettr45hh4325543544hjhjh21lllll"
-p reverse_and_combine_text("sdfsdf wee sdffg 342234 ftt") ==  "gffds432243fdsfdseewttf"
+# p reverse_and_combine_text("dfghrtcbafed") == "dfghrtcbafed"
+# p reverse_and_combine_text("234hh54 53455 sdfqwzrt rtteetrt hjhjh lllll12  44") == "trzwqfdstrteettr45hh4325543544hjhjh21lllll"
+# p reverse_and_combine_text("sdfsdf wee sdffg 342234 ftt") ==  "gffds432243fdsfdseewttf"
