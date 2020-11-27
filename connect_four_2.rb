@@ -73,29 +73,6 @@ who_is_winner([
   [[row 1,], [row 1,], [row 1,], etc
       A         B         C
 
-**Algorithm**
-1. Iterate over the input array
-2. split each element based on '_' character
-3. Use first element containing a letter to find the value (index) in the hash 
-4. use the value to determine what index position to push the 2nd element (color) to the board array
-
-
-**Algorithm - Win Conditions**
-1. start at board[0][0]
-2. Get temporary win condition arrays
-    - vertical win condition (only get if count is >= 4)
-    - up diaganol (only get for rows 1 - 3)
-    - down diaganol (only get for rows 4 - 6)
-    - horizontal (only get for columns A - D)
-3. If any win condtion Arrays contain winner, return winning string
-=end
-
-COLUMNS = { "A" => 0, "B" => 1, "C" => 2,
-            "D" => 3, "E" => 4, "F" => 5,
-            "G" => 6 
-          }
-          
-=begin
 ***New-Algorithm
 1. create board Array (7 columns of 6 rows)
 2. set each row in every column to nil
@@ -106,15 +83,6 @@ COLUMNS = { "A" => 0, "B" => 1, "C" => 2,
   - else check next element
 4. return winner
 
-=end
-
-def create_board
-  board = []
-  7.times { |element| board << [nil, nil, nil, nil, nil, nil] }
-  board
-end
-
-=begin
 **Update_board algortihm**
 1. determine column to be udpated
   - use column vas key in the COLUMNS variable to get the correct index
@@ -122,8 +90,45 @@ end
   - check each row  at that index starting at index 0
   - once a row contains nil, replace nil with the color
 4. return new board array
+
+**check for win Algorithm**
+1. iterate over every row in every column
+2. if element == nil then next
+3. otherwise check for vertical win
+4. check for horizontal win
+5. check for diagnol wins
+6. if there is a winner return the color
 =end
+
+=begin
+
+Codewars shows this should be DRAW
+
+Diagonal Down Win
+ 
+" nil   |  nil   |  nil   |  nil   |  nil   |  nil   | Yellow"
+" nil   |  nil   | Yellow |  nil   |  nil   |  nil   |  Red  "
+" nil   |  nil   |  Red   |  nil   |  nil   |  Red   | Yellow"
+" nil   |  nil   |  Red   | Yellow |  nil   |  Red   |  Red  "
+" nil   |  nil   | Yellow |  Red   | Yellow | Yellow | Yellow"
+"Yellow |  Red   |  Red   |  Red   | Yellow | Yellow |  Red  "
+The winner is:
+"Yellow"
+
+=end
+
 require 'pry'
+
+COLUMNS = { "A" => 0, "B" => 1, "C" => 2,
+            "D" => 3, "E" => 4, "F" => 5,
+            "G" => 6 
+          }
+          
+def create_board
+  board = []
+  7.times { |element| board << [nil, nil, nil, nil, nil, nil] }
+  board
+end
 
 def update_board(column, color, board)
   column_index = COLUMNS[column]
@@ -148,7 +153,6 @@ def format_row(row)
 end
 
 def display_board(board)
-  
   6.times do |int|
     row = 5 - int
     
@@ -156,23 +160,114 @@ def display_board(board)
     board.each { |column| current_row << column[row] }
     p current_row = format_row(current_row)
   end
+end
+
+def winning_pieces(pieces, color)
+  if pieces.size != 4
+    false
+  elsif pieces.all? { |slot| slot == color }
+    color
+  else
+    false
+  end
+end
+
+def vertical_winner(column, row_index)
+  color = column[row_index]
+  current_pieces = column[row_index..(row_index + 3)]
   
+  winning_pieces(current_pieces, color)
+end
+
+def horizontal_winner(board, column_index, row_index) 
+  color = board[column_index][row_index]
+  current_pieces = []
+  
+    4.times do |int|
+      # binding.pry
+      if board[column_index + int] != nil
+        current_pieces << board[column_index + int][row_index]
+      end
+    end
+  winning_pieces(current_pieces, color)
+end
+
+def diagonal_up_winner(board, column_index, row_index) 
+  color = board[column_index][row_index]
+  current_pieces = []
+  
+    4.times do |int|
+
+      if board[column_index + int] != nil
+        current_pieces << board[column_index + int][row_index + int]
+      end
+    end
+  winning_pieces(current_pieces, color)
+end
+
+def diagonal_down_winner(board, column_index, row_index) 
+  color = board[column_index][row_index]
+  current_pieces = []
+  
+    4.times do |int|
+
+      if board[column_index + int] != nil && row_index >= 3
+        current_pieces << board[column_index + int][row_index - int]
+      end
+    end
+  winning_pieces(current_pieces, color)
+end
+
+def check_for_win(board)
+  winner = nil
+  
+  board.each_with_index do |column, column_index|
+    break if winner != nil
+    next if column[0] == nil
+    column.each_with_index do |slot, row_index|
+
+      if slot == nil
+        next
+      elsif vertical_winner(column, row_index) 
+
+        puts "Vertical Win"
+        winner = vertical_winner(column, row_index)
+        break
+      elsif horizontal_winner(board, column_index, row_index) 
+
+        puts "Horizontal Win"
+        winner = horizontal_winner(board, column_index, row_index)
+        break
+      elsif diagonal_up_winner(board, column_index, row_index) 
+        puts "Diagonal Up Win"
+        winner = diagonal_up_winner(board, column_index, row_index) 
+        break
+      elsif diagonal_down_winner(board, column_index, row_index) 
+        puts "Diagonal Down Win"
+        winner = diagonal_down_winner(board, column_index, row_index) 
+        break
+      end
+    end
+  end
+  winner
 end
           
 def who_is_winner(array)
   board = create_board
-  
+  winner = nil
 
   array.each do |play|
+    break if winner != nil
     column = play.split('_')[0]
     color = play.split('_')[1]
-    # binding.pry
+
     board = update_board(column, color, board)
+    winner = check_for_win(board)
     puts " "
   end
   display_board(board)
-  board
-  
+  puts "The winner is:"
+  p winner != nil ? winner : "Draw"
 end
 
 
@@ -189,157 +284,163 @@ p who_is_winner([ "A_Red",
   "B_Yellow",
   "G_Red",
   "B_Yellow"]) == "Yellow"
+puts ""
+
+p who_is_winner([ "A_Yellow",
+  "B_Red",
+  "B_Yellow",
+  "C_Red",
+  "C_Yellow",
+  "D_Red",
+  "C_Yellow",
+  "D_Red",
+  "E_Yellow",
+  "D_Red",
+  "D_Yellow"]) == "Yellow"
+puts ""
   
-# p who_is_winner([ "A_Yellow",
-#   "B_Red",
-#   "B_Yellow",
-#   "C_Red",
-#   "C_Yellow",
-#   "D_Red",
-#   "C_Yellow",
-#   "D_Red",
-#   "E_Yellow",
-#   "D_Red",
-#   "D_Yellow"]) == "Yellow"
-  
-# p who_is_winner([ "A_Red",
-#   "B_Yellow",
-#   "A_Red",
-#   "E_Yellow",
-#   "F_Red",
-#   "G_Yellow",
-#   "A_Red",
-#   "G_Yellow"]) == "Draw"
+p who_is_winner([ "A_Red",
+  "B_Yellow",
+  "A_Red",
+  "E_Yellow",
+  "F_Red",
+  "G_Yellow",
+  "A_Red",
+  "G_Yellow"]) == "Draw"
+puts ""
 
 
-# p who_is_winner([
-#   "C_Yellow",
-#   "E_Red",
-#   "G_Yellow",
-#   "B_Red",
-#   "D_Yellow",
-#   "B_Red",
-#   "B_Yellow",
-#   "G_Red",
-#   "C_Yellow",
-#   "C_Red",
-#   "D_Yellow",
-#   "F_Red",
-#   "E_Yellow",
-#   "A_Red",
-#   "A_Yellow",
-#   "G_Red",
-#   "A_Yellow",
-#   "F_Red",
-#   "F_Yellow",
-#   "D_Red",
-#   "B_Yellow",
-#   "E_Red",
-#   "D_Yellow",
-#   "A_Red",
-#   "G_Yellow",
-#   "D_Red",
-#   "D_Yellow",
-#   "C_Red"]) ==  "Yellow"
+p who_is_winner([
+  "C_Yellow",
+  "E_Red",
+  "G_Yellow",
+  "B_Red",
+  "D_Yellow",
+  "B_Red",
+  "B_Yellow",
+  "G_Red",
+  "C_Yellow",
+  "C_Red",
+  "D_Yellow",
+  "F_Red",
+  "E_Yellow",
+  "A_Red",
+  "A_Yellow",
+  "G_Red",
+  "A_Yellow",
+  "F_Red",
+  "F_Yellow",
+  "D_Red",
+  "B_Yellow",
+  "E_Red",
+  "D_Yellow",
+  "A_Red",
+  "G_Yellow",
+  "D_Red",
+  "D_Yellow",
+  "C_Red"]) ==  "Yellow"
+puts ""
           
-# p who_is_winner(["C_Yellow",
-#   "B_Red",
-#   "B_Yellow",
-#   "E_Red",
-#   "D_Yellow",
-#   "G_Red",
-#   "B_Yellow",
-#   "G_Red",
-#   "E_Yellow",
-#   "A_Red",
-#   "G_Yellow",
-#   "C_Red",
-#   "A_Yellow",
-#   "A_Red",
-#   "D_Yellow",
-#   "B_Red",
-#   "G_Yellow",
-#   "A_Red",
-#   "F_Yellow",
-#   "B_Red",
-#   "D_Yellow",
-#   "A_Red",
-#   "F_Yellow",
-#   "F_Red",
-#   "B_Yellow",
-#   "F_Red",
-#   "F_Yellow",
-#   "G_Red",
-#   "A_Yellow",
-#   "F_Red",
-#   "C_Yellow",
-#   "C_Red",
-#   "G_Yellow",
-#   "C_Red",
-#   "D_Yellow",
-#   "D_Red",
-#   "E_Yellow",
-#   "D_Red",
-#   "E_Yellow",
-#   "C_Red",
-#   "E_Yellow",
-#   "E_Red"]) ==  "Yellow"
+p who_is_winner(["C_Yellow",
+  "B_Red",
+  "B_Yellow",
+  "E_Red",
+  "D_Yellow",
+  "G_Red",
+  "B_Yellow",
+  "G_Red",
+  "E_Yellow",
+  "A_Red",
+  "G_Yellow",
+  "C_Red",
+  "A_Yellow",
+  "A_Red",
+  "D_Yellow",
+  "B_Red",
+  "G_Yellow",
+  "A_Red",
+  "F_Yellow",
+  "B_Red",
+  "D_Yellow",
+  "A_Red",
+  "F_Yellow",
+  "F_Red",
+  "B_Yellow",
+  "F_Red",
+  "F_Yellow",
+  "G_Red",
+  "A_Yellow",
+  "F_Red",
+  "C_Yellow",
+  "C_Red",
+  "G_Yellow",
+  "C_Red",
+  "D_Yellow",
+  "D_Red",
+  "E_Yellow",
+  "D_Red",
+  "E_Yellow",
+  "C_Red",
+  "E_Yellow",
+  "E_Red"]) ==  "Yellow"
+puts ""
   
-# p who_is_winner(["F_Yellow",
-#     "G_Red",
-#     "D_Yellow",
-#     "C_Red",
-#     "A_Yellow",
-#     "A_Red",
-#     "E_Yellow",
-#     "D_Red",
-#     "D_Yellow",
-#     "F_Red",
-#     "B_Yellow",
-#     "E_Red",
-#     "C_Yellow",
-#     "D_Red",
-#     "F_Yellow",
-#     "D_Red",
-#     "D_Yellow",
-#     "F_Red",
-#     "G_Yellow",
-#     "C_Red",
-#     "F_Yellow",
-#     "E_Red",
-#     "A_Yellow",
-#     "A_Red",
-#     "C_Yellow",
-#     "B_Red",
-#     "E_Yellow",
-#     "C_Red",
-#     "E_Yellow",
-#     "G_Red",
-#     "A_Yellow",
-#     "A_Red",
-#     "G_Yellow",
-#     "C_Red",
-#     "B_Yellow",
-#     "E_Red",
-#     "F_Yellow",
-#     "G_Red",
-#     "G_Yellow",
-#     "B_Red",
-#     "B_Yellow",
-#     "B_Red"]) == "Red"
-    
-# p who_is_winner(["A_Yellow",
-#   "B_Red",
-#   "B_Yellow",
-#   "C_Red",
-#   "G_Yellow",
-#   "C_Red",
-#   "C_Yellow",
-#   "D_Red",
-#   "G_Yellow",
-#   "D_Red",
-#   "G_Yellow",
-#   "D_Red",
-#   "F_Yellow",
-#   "E_Red",
-#   "D_Yellow"]) ==  "Red"
+p who_is_winner(["F_Yellow",
+    "G_Red",
+    "D_Yellow",
+    "C_Red",
+    "A_Yellow",
+    "A_Red",
+    "E_Yellow",
+    "D_Red",
+    "D_Yellow",
+    "F_Red",
+    "B_Yellow",
+    "E_Red",
+    "C_Yellow",
+    "D_Red",
+    "F_Yellow",
+    "D_Red",
+    "D_Yellow",
+    "F_Red",
+    "G_Yellow",
+    "C_Red",
+    "F_Yellow",
+    "E_Red",
+    "A_Yellow",
+    "A_Red",
+    "C_Yellow",
+    "B_Red",
+    "E_Yellow",
+    "C_Red",
+    "E_Yellow",
+    "G_Red",
+    "A_Yellow",
+    "A_Red",
+    "G_Yellow",
+    "C_Red",
+    "B_Yellow",
+    "E_Red",
+    "F_Yellow",
+    "G_Red",
+    "G_Yellow",
+    "B_Red",
+    "B_Yellow",
+    "B_Red"]) == "Red"
+puts " "
+  
+p who_is_winner(["A_Yellow",
+  "B_Red",
+  "B_Yellow",
+  "C_Red",
+  "G_Yellow",
+  "C_Red",
+  "C_Yellow",
+  "D_Red",
+  "G_Yellow",
+  "D_Red",
+  "G_Yellow",
+  "D_Red",
+  "F_Yellow",
+  "E_Red",
+  "D_Yellow"]) ==  "Red"
