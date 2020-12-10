@@ -3,14 +3,18 @@
 
 Rules:
 Explicit
-  - Input:
-  - Output:
+  - Input: 
+  - Output: 
 
 **Examples / Test Cases**
 
 
+
 **Data Structures**
+
 
 **Algorithm**
 
+
 =end
+

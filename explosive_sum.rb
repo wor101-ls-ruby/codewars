@@ -36,24 +36,41 @@ def get_combos(number)
   
 end
 
+def create_hash
+  hash = {}
+  
+  (0..9).each do |int|
+   hash[int] = get_combos(int).count
+  end
+ hash 
+  
+end
+
 def exp_sum(num)
+
   get_combos(num).count
 end
 
-p exp_sum(10) == 42
-p exp_sum(0) == 1
-p exp_sum(1) == 1
-p exp_sum(-1) == 0
-p exp_sum(4) == 5
-p exp_sum(11)
-puts 
-p exp_sum(1)
-p exp_sum(2)
-p exp_sum(3)
-p exp_sum(4)
-p exp_sum(5)
-p exp_sum(6)
-p exp_sum(7)
-p exp_sum(8)
-p exp_sum(9)
-p exp_sum(10)
+# p exp_sum(10) == 42
+# p exp_sum(0) == 1
+# p exp_sum(1) == 1
+# p exp_sum(-1) == 0
+# p exp_sum(4) == 5
+# p exp_sum(11)
+# puts 
+p create_hash
+p get_combos(1)
+p get_combos(2)
+p get_combos(3)
+p get_combos(4)
+p get_combos(5)
+# p exp_sum(1)
+# p exp_sum(2)
+# p exp_sum(3)
+# p exp_sum(4)
+# p exp_sum(5)
+# p exp_sum(6)
+# p exp_sum(7)
+# p exp_sum(8)
+# p exp_sum(9)
+# p exp_sum(10)
