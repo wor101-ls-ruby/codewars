@@ -37,63 +37,49 @@ Output: "43hgff434cbafed343ire_55321"
 - An array of words delimited by whitespace
 
 **Algorithm**
-1. Create array of words split by whitespace
-2. Create new Array of reversed and joined words
-3. If the size of the words array is 1 return a string version of the 1 elment
-4. Destructively take the first two elements
-5. reverse the string in each element and then join the elments
-6. add the newly reversed/joined string to the return array
-7. if the words arrays size is greater than 0 then pass it to the method again
+1. initialize an Array named words to hold each word
+2. create a loop that continues until the words array is only 1 element in size
+  - reverse each word in the array
+  - send array to new method called combine_words
+  - set words array to equal the return of combine_words
+3. return the single element as a strin from words array
 
+**combine_words Algorithm**
+1. accepts one parameter called words which is an Array
+2. create a return_array that is empty
+2. find the size of the array
+3. create a range from 0 up to but not includng the size of the array
+4. iterate over the range using the #each method and the current number will be called index
+5. if the current index is even && the next index != nil then join current index with next index and add to return_array
+6. if the next index == nil then add element at current index to return_array
+7  return_array
 =end
-require 'pry'
 
-def reverse_and_combine_text(input_string)
-  words_array = input_string.split(' ')
-  words_array.map { |word| word.reverse! }
-  reversed_and_joined = []
-
-  return input_string if words_array.size == 1
+def combine_words(words)
+  return_words = []
   
-  reversed_and_joined << words_array.shift(2).join
-  
-  until reversed_and_joined.size == 1 && words_array.size == 0
-  # binding.pry
-    if words_array.size > 0
-      # binding.pry
-      reversed_and_joined << reverse_and_combine_text(words_array.shift(2).join(' '))
-    elsif reversed_and_joined.size > 1
-      # binding.pry
-      reversed_and_joined = [reverse_and_combine_text(reversed_and_joined.join(' '))]
+  (0...words.size).each do |index|
+    if index.even? && words[index + 1] != nil
+      return_words << (words[index] + words[index + 1])
+    elsif index.even? && words[index + 1] == nil
+      return_words << words[index]
     end
   end
-  p reversed_and_joined[0]
-
-
-
-def combine(arr)
-  new_array = []
-  (0...arr.size).each do |index|
-    new_array << arr[index, 2].join if index.even?
-  end
-  new_array
+  return_words
 end
-combine("234hh54 53455 sdfqwzrt rtteetrt hjhjh lllll12  44".split(' '))
 
 
-def reverse_and_combine_text(string)
-  words = string.split(' ')
-  loop_times = words.count / 2
-  loop_times += 1 if words.count.odd? 
+def reverse_and_combine_text(input_string)
+  words = input_string.split
+
+  return words[0] if words.size == 1 
   
-  return string if words.size == 1
-  
-  loop_times.times do |_|
-    words.each { |word| word.reverse! }
-    words = combine(words)
+  until words.size == 1
+    words.map! { |word| word.reverse }
+    words = combine_words(words)
   end
   
-  words.join
+  p words[0]
 end
 
 
