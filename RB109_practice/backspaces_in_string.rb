@@ -57,7 +57,6 @@ def clean_string(input_string)
   end
   
   return_string.reverse
-
 end
 
 
