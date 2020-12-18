@@ -49,7 +49,25 @@ def manual_sort!(array)
   p array.object_id
 end
 
+def create_fib(max_number)
+  fib_numbers = [0, 1, 1]
+  
+  loop do 
+    next_fib = (fib_numbers[-2] + fib_numbers[-1])
+    break if next_fib > max_number
+    fib_numbers << next_fib
+  end
+  fib_numbers
+end
 
+def is_palindrome?(word)
+  reversed_word = []
+  
+  word.chars.each { |char| reversed_word.unshift(char) }
+  
+  reversed_word.join == word
+  
+end
 
 
 
@@ -58,10 +76,21 @@ end
 
 array1 = (1..11).to_a.reverse
 
-array2 = %w(ape bear cat dog eagle falcon giraffe hippo iguana).reverse
+array2 = %w(ape bear cat dog eagle falcon giraffe hippo iguana)
 
 array3 = (1..100).to_a.sample(10)
 
+word1 = 'anna'
+word2 = 'racecar'
+word3 = 'madam'
+word4 = 'civic'
+word5 = 'dragon'
+
+p is_palindrome?(word1)
+p is_palindrome?(word2)
+p is_palindrome?(word3)
+p is_palindrome?(word4)
+p is_palindrome?(word5)
 
 # p reverse_array(array1)
 # p reverse_array(array2)
@@ -74,8 +103,12 @@ array3 = (1..100).to_a.sample(10)
 # p manual_sort!(array2)
 # p manual_sort!(array3)
 
-p array3.sort { |a, b| b <=> a }
+# p array3.sort { |a, b| b <=> a }
 
-p array2.sort_by { |animal| animal.size } 
-p array2.sort_by { |animal| animal[1] } 
-p array2.sort { |a, b| b[1] <=> a[1] }
+# p array2.sort_by { |animal| animal.size } 
+# p array2.sort_by { |animal| animal[1] } 
+# p array2.sort { |a, b| b[1] <=> a[1] }
+
+p fibs = create_fib(1000)
+
+p array2.select { |animal| fibs.include?(array2.index(animal)) }
